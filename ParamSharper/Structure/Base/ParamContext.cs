@@ -9,7 +9,7 @@ public abstract class ParamContext : IParamDeclaration
     public ParamAccessibility Accessibility { get; }
     public bool NeedsProcessing { get; }
     public string ElementPath { get; }
-    public ParamContext? DeclarationOwner { get; }
+    public virtual ParamContext? DeclarationOwner { get; }
     public string DeclarationName { get; }
     private readonly List<IParamStatement> _statements;
     private readonly Dictionary<string, IParamVariableDeclaration> _parameterCache = new();
@@ -45,5 +45,17 @@ public abstract class ParamContext : IParamDeclaration
     public bool HasVariable(ParamVariableDeclaration variable) => _parameterCache.ContainsValue(variable);
 
     public bool HasVariable(string name) => _parameterCache.ContainsKey(name);
+
+    public bool TryDeleteContext(string contextName)
+    {
+        throw new NotImplementedException(); //TODO Accessibility
+
+    }
+
+    public bool TryDeleteContext(ParamContext context)
+    {
+        throw new NotImplementedException(); //TODO Accessibility
+
+    }
 
 }
