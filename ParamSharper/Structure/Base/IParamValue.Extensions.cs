@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using ParamSharper.Structure.Value;
 
-namespace ParamSharper.Structure.Value;
+namespace ParamSharper.Structure.Base;
 
 public static class IParamValueExtensions
 {

@@ -2,7 +2,7 @@
 using ParamSharper.Structure.Value;
 using ParamSharper.Structure.Value.Helpers;
 
-namespace ParamSharper.Structure.Directive;
+namespace ParamSharper.Structure.Declaration.Directive;
 
 public readonly struct ParamMutationDirective : IParamDirective
 {
@@ -10,6 +10,7 @@ public readonly struct ParamMutationDirective : IParamDirective
     public string Target { get; }
     public ParamArray<IParamValue> Mutation { get; }
     public bool Additive { get; }
+    public bool Rapable => true;
 
     public ParamMutationDirective(string target, ParamArray<IParamValue> mutation, bool additive, string pathPrefix)
     {
@@ -24,7 +25,7 @@ public readonly struct ParamMutationDirective : IParamDirective
     {
     }
 
-    public bool TryCompute(ParamContext computationContext, out IParamDeclaration? created)
+    public bool TryCompute(ParamContext computationContext, out IParamElement? created)
     {
         throw new NotImplementedException();
     }

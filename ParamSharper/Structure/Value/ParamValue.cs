@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Runtime.InteropServices;
 using ParamSharper.Flags;
+using ParamSharper.Structure.Base;
 
 namespace ParamSharper.Structure.Value;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ParamValue<T> : IParamValue
+public struct ParamValue<T>
 {
     [field: FieldOffset(0)] public ParamVariableType Type { get; } = ParamVariableType.Custom;
     [field: FieldOffset(sizeof(ParamVariableType))] public T Value { get; init; }

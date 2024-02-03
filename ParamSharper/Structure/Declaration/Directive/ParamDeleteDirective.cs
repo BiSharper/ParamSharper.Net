@@ -1,9 +1,10 @@
 ﻿using ParamSharper.Structure.Base;
 
-namespace ParamSharper.Structure.Directive;
+namespace ParamSharper.Structure.Declaration.Directive;
 
-public readonly struct ParamDeleteDirective : IParamDirective
+public readonly struct ParamDeleteDirective : IParamDeclarationDirective
 {
+    public bool Rapable => true;
     public string ElementPath { get; }
     public string Target { get; }
 
@@ -21,9 +22,13 @@ public readonly struct ParamDeleteDirective : IParamDirective
 
     public bool TryCompute(ParamContext computationContext, out IParamDeclaration? created)
     {
+        throw new NotImplementedException();
+    }
+
+    public bool TryCompute(ParamContext computationContext, out IParamElement? created)
+    {
         created = null;
 
         return computationContext.TryDeleteContext(Target);
     }
-
 }

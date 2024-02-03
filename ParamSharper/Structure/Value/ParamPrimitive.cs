@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using ParamSharper.Flags;
+using ParamSharper.Structure.Base;
 
 namespace ParamSharper.Structure.Value;
 

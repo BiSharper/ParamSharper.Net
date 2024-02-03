@@ -1,12 +1,11 @@
 ﻿using ParamSharper.Flags;
 using ParamSharper.Structure.Declaration;
-using ParamSharper.Structure.Directive;
 
 namespace ParamSharper.Structure.Base;
 
 public abstract class ParamContext : IParamDeclaration
 {
-    public ParamAccessibility Accessibility { get; }
+    public virtual ParamAccessibility Accessibility => ParamAccessibility.Default;
     public bool NeedsProcessing { get; }
     public string ElementPath { get; }
     public virtual ParamContext? DeclarationOwner { get; }

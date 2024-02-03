@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ParamSharper.Structure.Base;
 
-namespace ParamSharper.Structure.Directive;
+namespace ParamSharper.Structure.Base;
 
-public interface IParamDirective : IParamStatement
+public interface IParamDeclarationDirective : IParamDirective
 {
     public bool TryCompute(ParamContext computationContext, [MaybeNullWhen(false)] out IParamDeclaration? created);
 }
