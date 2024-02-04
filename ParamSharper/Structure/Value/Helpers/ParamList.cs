@@ -6,7 +6,7 @@ using ParamSharper.Structure.Base;
 namespace ParamSharper.Structure.Value.Helpers;
 
 [StructLayout(LayoutKind.Explicit)]
-public readonly struct ParamList<T> : IParamValue, IEnumerable<T> where T : IParamValue
+public readonly struct ParamList<T> : IParamValue, IEnumerable<T> where T : struct, IParamValue
 {
     [field: FieldOffset(0)] public ParamVariableType Type { get; } = ParamVariableType.Array;
     [field: FieldOffset(sizeof(ParamVariableType))]  public List<T> Values { get; }

@@ -13,7 +13,7 @@ public readonly struct ParamPrimitive : IParamValue
     [field: FieldOffset(sizeof(ParamVariableType))] private float DoubleValue { get; }
     [field: FieldOffset(sizeof(ParamVariableType))] private string StringValue { get; }
     [field: FieldOffset(sizeof(ParamVariableType))] private string IntValue { get; }
-    [field: FieldOffset(sizeof(ParamVariableType))] private ParamPrimitive[] ArrayValue { get; }
+    [field: FieldOffset(sizeof(ParamVariableType))] private IParamValue[] ArrayValue { get; }
 }
 
 

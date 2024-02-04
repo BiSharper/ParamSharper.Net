@@ -6,7 +6,7 @@ using ParamSharper.Structure.Base;
 namespace ParamSharper.Structure.Value;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ParamValue<T>
+public readonly struct ParamValue<T> : IParamValue where T : struct
 {
     [field: FieldOffset(0)] public ParamVariableType Type { get; } = ParamVariableType.Custom;
     [field: FieldOffset(sizeof(ParamVariableType))] public T Value { get; init; }

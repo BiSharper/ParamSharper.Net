@@ -2,5 +2,5 @@
 
 public enum ParamVariableType : byte
 {
-    String, Int, Double, Float, Array, Expression, Custom = Array, Directive
+    String, Int, Double, Float, Array, Expression, Directive, Custom = Array,
 }

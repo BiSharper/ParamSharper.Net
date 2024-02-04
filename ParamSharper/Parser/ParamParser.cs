@@ -1,6 +1,13 @@
 ﻿namespace ParamSharper.Parser;
 
-public static class ParamParser
+public ref struct ParamParser
 {
-    
+    private readonly TextReader _reader;
+
+
+
+    public ParamParser(TextReader reader)
+    {
+        _reader = reader;
+    }
 }

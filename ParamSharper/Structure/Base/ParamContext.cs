@@ -15,6 +15,15 @@ public abstract class ParamContext : IParamDeclaration
     private readonly Dictionary<string, ParamContext> _contextCache = new();
     public IParamStatement this[int index] => _statements[index];
 
+    public IEnumerable<IParamStatement> this[Range index]
+    {
+        get
+        {
+            for (int i = index.Start.Value, j = index.End.Value; i < j; i++)
+                yield return this[i];
+        }
+    }
+
     protected ParamContext(string name, ParamContext? owner, List<IParamStatement> statements)
     {
         ElementPath = (DeclarationOwner = owner) is not null
