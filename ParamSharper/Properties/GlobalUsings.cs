@@ -1,5 +1,4 @@
-﻿
-global using size_t =
+﻿global using size_t =
 #if TARGET_64BIT
 System.Int64
 #else

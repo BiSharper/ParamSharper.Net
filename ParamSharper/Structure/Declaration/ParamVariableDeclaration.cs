@@ -12,6 +12,7 @@ public struct ParamVariableDeclaration : IParamVariableDeclaration
     [field: FieldOffset(0)] public string ElementPath { get; }
     [field: FieldOffset(sizeof(size_t))] public ParamContext DeclarationOwner { get; }
     [field: FieldOffset(sizeof(size_t) * 2)] public string DeclarationName { get; }
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
     [field: FieldOffset(sizeof(size_t) * 3)] public ParamVariableType Type { get; } //Assigned quietly via marshal
     [field: FieldOffset(sizeof(size_t) * 3)] private IParamValue _boxedValue;
 
@@ -35,9 +36,9 @@ public struct ParamVariableDeclaration<T> : IParamVariableDeclaration where T: I
     [field: FieldOffset(sizeof(size_t))] public ParamContext DeclarationOwner { get; }
     [field: FieldOffset(sizeof(size_t) * 2)] public string DeclarationName { get; }
     // ReSharper disable three times UnassignedGetOnlyAutoProperty
-    [field: FieldOffset(sizeof(size_t) * 2)] public ParamVariableType Type { get; }
-    [field: FieldOffset(sizeof(size_t) * 2)] public ParamPrimitive ValuePrimitive { get; }
-    [field: FieldOffset(sizeof(size_t) * 2)] public T Value { get; private set; }
+    [field: FieldOffset(sizeof(size_t) * 3)] public ParamVariableType Type { get; }
+    [field: FieldOffset(sizeof(size_t) * 3)] public ParamPrimitive ValuePrimitive { get; }
+    [field: FieldOffset(sizeof(size_t) * 3)] public T Value { get; private set; }
 
     public ParamVariableDeclaration(string name, T value, ParamContext owner)
     {

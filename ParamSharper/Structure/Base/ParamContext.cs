@@ -1,4 +1,5 @@
-﻿using ParamSharper.Flags;
+﻿using System.Runtime.CompilerServices;
+using ParamSharper.Flags;
 using ParamSharper.Structure.Declaration;
 
 namespace ParamSharper.Structure.Base;
