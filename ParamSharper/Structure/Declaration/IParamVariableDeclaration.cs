@@ -7,5 +7,7 @@ public interface IParamVariableDeclaration : IParamDeclaration
 {
     public ParamVariableType Type { get; }
 
+    ParamContext IParamDeclaration.DeclarationOwner { get; }
+
     public IParamValue GetValueBoxed();
 }

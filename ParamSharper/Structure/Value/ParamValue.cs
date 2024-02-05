@@ -18,7 +18,6 @@ public readonly struct ParamValue<T> : IParamValue where T : struct
             float => ParamVariableType.Float,
             int => ParamVariableType.Int,
             double => ParamVariableType.Double,
-            string => ParamVariableType.String,
             IEnumerable => ParamVariableType.Array,
             _ => ParamVariableType.Custom
         };

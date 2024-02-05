@@ -8,7 +8,7 @@ public sealed class ParamClassDeclaration : ParamContext
 {
 
     [ParamVariable<ParamAccessibility>] public override ParamAccessibility Accessibility { get; }
-    public override ParamContext DeclarationOwner { get; } = null!;
+    public override ParamContext? DeclarationOwner { get; } = null!;
 
     public ParamClassDeclaration(string name, ParamContext owner, List<IParamStatement> statements) : base(name, owner, statements)
     {

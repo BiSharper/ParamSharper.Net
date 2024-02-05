@@ -2,7 +2,7 @@
 
 public interface IParamDeclaration : IParamStatement
 {
-    public ParamContext DeclarationOwner { get; }
+    public ParamContext? DeclarationOwner { get; }
     public string DeclarationName { get; }
 }
 

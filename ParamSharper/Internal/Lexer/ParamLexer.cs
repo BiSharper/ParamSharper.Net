@@ -67,8 +67,8 @@ internal ref struct ParamLexer
                         case '+': return ConsumeArrayOperator(ParamLexeme.SubAssign, ParamTokenProof.AddAssign);
                         case '-': return ConsumeArrayOperator(ParamLexeme.SubAssign, ParamTokenProof.SubAssign);
                         case '=': return ConsumeAssignOperator();
+                        default: return GenerateToken(ParamLexeme.Invalid, c.ToString());
                     }
-                    break;
                 }
                 case ParamLexerMode.Value: 
                 {
