@@ -1,13 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
+using ParamSharper.Internal.Lexer.Types;
+using ParamSharper.Internal.Lexer.Utility;
 
 namespace ParamSharper.Internal.Lexer;
+
 
 internal ref struct ParamLexer
 {
     private readonly TextReader _reader;
     private readonly StringBuilder _tokenBuilder = new();
-    private int _charCache = -1;
+    private int? _charCache = null;
     public int Line { get; private set; }
     public int Column { get; private set;}
     public ParamLexerMode Mode { get; private set; }
@@ -29,31 +33,147 @@ internal ref struct ParamLexer
         for (;;)
         {
             int c;
-            if (_charCache == -1) c = _reader.Read();
-            else { c = _charCache; _charCache = -1; }
-            _tokenBuilder.Clear();
-            _tokenBuilder.Append(c);
-            switch (c)
             {
-                case ' ' or '\t': continue;
-                case '\r': continue;
-                case '\n': Line++; Column = 0; continue;
-                case '{': return GenerateToken(ParamLexeme.LeftCurly);
-                case ',': return GenerateToken(ParamLexeme.Comma);
-                case ':': return GenerateToken(ParamLexeme.Colon);
-                case ';': return GenerateToken(ParamLexeme.Semicolon);
+                if (_charCache is { } notNull)
+                {
+                    c = notNull; _charCache = null;
+                } else c = _reader.Read();
+            }
 
+
+            switch (Mode)
+            {
+                case ParamLexerMode.Syntax:
+                {
+                    if(ParamTokenProof.IsWhitespace(c)) return ConsumeWhitespace(_charCache = c);
+                    if(ParamTokenProof.IsIdentifierChar(_charCache = c))
+                    {
+                        if (ReadWordToken() is { } token) return token;
+                        continue;
+                    }
+                    switch (c)
+                    {
+                        case '\r': continue; //Ignoring; CRLF is stupid
+                        case '#': { if (ConsumeHash() is { } token) return token; continue; }
+                        case '\n': return GenerateToken(ParamLexeme.EOL);
+                        case '{': return GenerateToken(ParamLexeme.LeftCurly, c.ToString());
+                        case '}': return GenerateToken(ParamLexeme.LeftCurly, c.ToString());
+                        case ',': return GenerateToken(ParamLexeme.Comma, c.ToString());
+                        case ':': return GenerateToken(ParamLexeme.Colon, c.ToString());
+                        case ';': return GenerateToken(ParamLexeme.Semicolon, c.ToString());
+                        case '[': return GenerateToken(ParamLexeme.RightSquare, c.ToString());
+                        case ']': return GenerateToken(ParamLexeme.LeftSquare, c.ToString());
+                        case '+': return ConsumeArrayOperator(ParamLexeme.SubAssign, ParamTokenProof.AddAssign);
+                        case '-': return ConsumeArrayOperator(ParamLexeme.SubAssign, ParamTokenProof.SubAssign);
+                        case '=': return ConsumeAssignOperator();
+                    }
+                    break;
+                }
+                case ParamLexerMode.Value:
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
     }
 
-    private ParamToken GenerateToken(ParamLexeme lexeme) => new()
+
+    private ParamToken ConsumeArrayOperator(ParamLexeme assumedLexeme, string lexemeText)
+    {
+        if ((_charCache = _reader.Read()) != '=') return GenerateToken(ParamLexeme.Invalid, lexemeText);
+        Mode = ParamLexerMode.Value;
+        return GenerateToken(assumedLexeme, lexemeText);
+    }
+
+    private ParamToken ConsumeAssignOperator()
+    {
+        Mode = ParamLexerMode.Value;
+        return GenerateToken(ParamLexeme.Assign, ParamTokenProof.Assign);
+    }
+
+    private ParamToken? ConsumeHash()
+    {
+        _tokenBuilder.Clear();
+        int previous = '#';
+        _tokenBuilder.Append(previous);
+        _charCache = _reader.Peek();
+        if (_charCache is '#')
+        {
+            for (_charCache = _reader.Peek(); ParamTokenProof.IsIdentifierChar(_charCache = _reader.Peek()); _reader.Read())
+                _tokenBuilder.Append((char)_charCache);
+
+            Mode = ParamLexerMode.PreProcessor;
+            return null;
+        }
+
+        for (; _charCache != '\n' || previous == '\\'; previous = (int)_charCache)
+        {
+            _tokenBuilder.Append((char)_charCache);
+            _charCache = _reader.Read();
+        }
+
+
+        return GenerateToken(ParamLexeme.Preprocessor);
+    }
+
+    private ParamToken ConsumeWhitespace(int? firstChar)
+    {
+        Debug.Assert(ParamTokenProof.IsWhitespace(firstChar));
+        _tokenBuilder.Clear();
+        if(firstChar is not null || _charCache is not null) _tokenBuilder.Append((char)(firstChar ?? _charCache)!);
+        bool isLineEnd;
+        for
+        (
+            _charCache = _reader.Peek();
+            ParamTokenProof.IsWhitespace(_charCache = _reader.Peek()) || !(isLineEnd = _charCache == '\n');
+            _reader.Read()
+        ) _tokenBuilder.Append((char)_charCache);
+
+        if (!isLineEnd) return GenerateToken(ParamLexeme.Whitespace);
+
+        IncrementLine();
+        return GenerateToken(ParamLexeme.EOL);
+    }
+
+    private ParamToken? ReadWordToken(int? firstChar = null)
+    {
+        Debug.Assert(ParamTokenProof.IsIdentifierChar(firstChar));
+        _tokenBuilder.Clear();
+        _tokenBuilder.Append(firstChar ?? _charCache ?? throw new NotSupportedException("Cannot read word prematurely."));
+        //TODO: Handle ## macro
+        for (_charCache = _reader.Peek(); ParamTokenProof.IsIdentifierChar(_charCache = _reader.Peek()); _reader.Read())
+        {
+            _tokenBuilder.Append((char)_charCache);
+        }
+
+        var text = _tokenBuilder.ToString();
+        switch (text)
+        {
+            case ParamTokenProof.KeywordExecute or ParamTokenProof.KeywordEvaluate:
+                Mode = ParamLexerMode.PreProcessor;
+                return null;
+            case ParamTokenProof.KeywordDelete:
+                return GenerateToken(ParamLexeme.Delete, ParamTokenProof.KeywordDelete);
+            case ParamTokenProof.KeywordClass:
+                return GenerateToken(ParamLexeme.Class, ParamTokenProof.KeywordClass);
+            case ParamTokenProof.KeywordEnum:
+                return GenerateToken(ParamLexeme.Enum, ParamTokenProof.KeywordEnum);
+            default: return GenerateToken(ParamLexeme.Identifier, ParamTokenProof.KeywordEnum);
+        }
+    }
+
+
+
+    private void IncrementLine()
+    {
+        Line++;
+        Column = 0;
+    }
+
+    private ParamToken GenerateToken(ParamLexeme lexeme, string? text = null) => new()
     {
         Type = lexeme,
-        Text = _tokenBuilder.ToString(),
+        Text = text ?? _tokenBuilder.ToString(),
         Column = Column,
         Line = Line
     };

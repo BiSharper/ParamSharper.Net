@@ -1,6 +1,8 @@
-﻿namespace ParamSharper.Internal.Lexer;
+﻿using BiSharper.LanguageUtils;
 
-public readonly ref struct ParamToken
+namespace ParamSharper.Internal.Lexer.Types;
+
+public readonly struct ParamToken : IBisToken<ParamLexeme>
 {
     public required ParamLexeme Type { get; init; }
     public required string Text { get; init; }
