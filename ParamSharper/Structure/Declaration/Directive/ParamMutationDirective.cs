@@ -4,7 +4,7 @@ using ParamSharper.Structure.Value.Helpers;
 
 namespace ParamSharper.Structure.Declaration.Directive;
 
-public readonly struct ParamMutationDirective : IParamDirective
+public readonly record struct ParamMutationDirective : IParamDirective
 {
     public string ElementPath { get; }
     public string Target { get; }

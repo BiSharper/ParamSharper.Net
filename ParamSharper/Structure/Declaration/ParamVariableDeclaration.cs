@@ -7,7 +7,7 @@ namespace ParamSharper.Structure.Declaration;
 
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ParamVariableDeclaration : IParamVariableDeclaration
+public record struct ParamVariableDeclaration : IParamVariableDeclaration
 {
     [field: FieldOffset(0)] public string ElementPath { get; }
     [field: FieldOffset(sizeof(size_t))] public ParamContext DeclarationOwner { get; }
@@ -30,7 +30,7 @@ public struct ParamVariableDeclaration : IParamVariableDeclaration
 }
 
 [StructLayout(LayoutKind.Explicit)]
-public struct ParamVariableDeclaration<T> : IParamVariableDeclaration where T: IParamValue
+public record struct ParamVariableDeclaration<T> : IParamVariableDeclaration where T: IParamValue
 {
     [field: FieldOffset(0)] public string ElementPath { get; }
     [field: FieldOffset(sizeof(size_t))] public ParamContext DeclarationOwner { get; }

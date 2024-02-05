@@ -1,4 +1,4 @@
-﻿namespace ParamSharper.Internal.Lexer;
+﻿namespace ParamSharper.Internal.Lexer.Types;
 
 public enum ParamLexeme : byte
 {

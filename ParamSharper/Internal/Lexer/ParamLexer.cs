@@ -53,6 +53,7 @@ internal ref struct ParamLexer
                     }
                     switch (c)
                     {
+                        case '/': return ConsumeComment();
                         case '\r': continue; //Ignoring; CRLF is stupid
                         case '#': { if (ConsumeHash() is { } token) return token; continue; }
                         case '\n': return GenerateToken(ParamLexeme.EOL);
@@ -69,12 +70,43 @@ internal ref struct ParamLexer
                     }
                     break;
                 }
-                case ParamLexerMode.Value:
+                case ParamLexerMode.Value: 
+                {
+                    if(ParamTokenProof.IsWhitespace(c)) continue;
+                    throw new NotImplementedException();
+
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
+    }
+
+    private ParamToken ConsumeComment()
+    {
+        _tokenBuilder.Clear();
+        _tokenBuilder.Append('/');
+        _tokenBuilder.Append((char)(_charCache = _reader.Peek()));
+        switch (_charCache)
+        {
+            case '/':
+                do
+                {
+                    _tokenBuilder.Append((char)(_charCache = _reader.Read()));
+                } while (_charCache != '\n');
+                break;
+            case '*':
+                for (var previous = (int)_charCache; _charCache != '/' && previous != '/'; previous = (int)_charCache)
+                {
+                    _tokenBuilder.Append((char)_charCache);
+                    _charCache = _reader.Read();
+                }
+                break;
+            default: return GenerateToken(ParamLexeme.Invalid);
+        }
+
+        return GenerateToken(ParamLexeme.Preprocessor);
     }
 
 
@@ -94,8 +126,7 @@ internal ref struct ParamLexer
     private ParamToken? ConsumeHash()
     {
         _tokenBuilder.Clear();
-        int previous = '#';
-        _tokenBuilder.Append(previous);
+        _tokenBuilder.Append('#');
         _charCache = _reader.Peek();
         if (_charCache is '#')
         {
@@ -106,7 +137,7 @@ internal ref struct ParamLexer
             return null;
         }
 
-        for (; _charCache != '\n' || previous == '\\'; previous = (int)_charCache)
+        for (int previous = '#'; _charCache != '\n' || previous == '\\'; previous = (int)_charCache)
         {
             _tokenBuilder.Append((char)_charCache);
             _charCache = _reader.Read();

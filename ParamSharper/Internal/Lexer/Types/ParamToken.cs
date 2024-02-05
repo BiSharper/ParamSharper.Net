@@ -2,7 +2,7 @@
 
 namespace ParamSharper.Internal.Lexer.Types;
 
-public readonly struct ParamToken : IBisToken<ParamLexeme>
+public readonly record struct ParamToken : IBisToken<ParamLexeme>
 {
     public required ParamLexeme Type { get; init; }
     public required string Text { get; init; }

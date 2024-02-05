@@ -3,7 +3,7 @@ using ParamSharper.Structure.Base;
 
 namespace ParamSharper.Structure.Value.Directive;
 
-public readonly struct ParamEvaluateDirective : IParamValueDirective
+public readonly record struct ParamEvaluateDirective : IParamValueDirective
 {
     public string ElementPath { get; }
     public bool Rapable => false;

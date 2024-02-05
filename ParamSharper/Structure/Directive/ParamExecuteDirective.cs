@@ -1,9 +1,8 @@
-﻿using ParamSharper.Flags;
-using ParamSharper.Structure.Base;
+﻿using ParamSharper.Structure.Base;
 
 namespace ParamSharper.Structure.Directive;
 
-public readonly struct ParamExecuteDirective : IParamDirective
+public readonly record struct ParamExecuteDirective : IParamDirective
 {
     public string ElementPath { get; }
     public bool Rapable => false;

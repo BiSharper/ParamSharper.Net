@@ -2,7 +2,7 @@
 
 namespace ParamSharper.Structure.Declaration.Directive;
 
-public readonly struct ParamDeleteDirective : IParamDeclarationDirective
+public readonly record struct ParamDeleteDirective : IParamDeclarationDirective
 {
     public bool Rapable => true;
     public string ElementPath { get; }
